@@ -549,10 +549,20 @@ $.extend( $.validator, {
 
 			// select all valid inputs inside the form (no submit or reset buttons)
 			return $( this.currentForm )
-			.find( "input, select, textarea" )
+			// mont@foray.com - 2015-05-01
+			// Support data-validateable attribte on div elements
+			.find("input, select, textarea, div[data-validateable]")
 			.not( ":submit, :reset, :image, [disabled]" )
 			.not( this.settings.ignore )
 			.filter( function() {
+			    // mont@foray.com - 2015-05-01
+			    // If the element doesn't have a name attribute but does have a data-name attribute then create and populate other properties that are used.
+			    if (!this.name && $(this).attr('data-name'))
+			    {
+			        this.name = $(this).attr('data-name');
+			        this.form = validator.currentForm;
+			    }
+
 				if ( !this.name && validator.settings.debug && window.console ) {
 					console.error( "%o has no name assigned", this );
 				}
